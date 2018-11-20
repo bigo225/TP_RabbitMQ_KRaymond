@@ -43,19 +43,45 @@ def initialize():
 ##### has request
 def receive_request(int sender):
 	
-	if node_holder == None and using==False and asked==False:
+	if node_holder == None and using==False:
 		node_holder = sender
 		channel.basic_publish(exchange='direct_logs',
                       routing_key="token",
                       body="send token")
-		print " [x] Sent token"
+		print " [x] Sent token to holder"
 		
-	pass
+	elif node_holder != sender:
+		queue.append(sender)
+		if asked==False:
+			asked = True
+			channel.basic_publish(exchange='direct_logs',
+                          routing_key="request",
+                          body=node_id)
+			print " [x] Sent request to holder"
+		
 
 
 ##### has token
-def receive_token():
+def receive_token(sender):
+	node_holder = queue[-1]
+	queue.remove[node_holder]
 	
+	if node_holder == node_id:
+		node_holder=None
+	else:
+		channel.basic_publish(exchange='direct_logs',
+                      routing_key="token",
+                      body="send token")
+		print " [x] Sent token to holder"
+		
+		if queue:
+			asked = True
+			channel.basic_publish(exchange='direct_logs',
+                      	  routing_key="request",
+                          body="send token")
+			print " [x] Sent request to holder"
+		else:
+			asked = False
 	pass
 
 
